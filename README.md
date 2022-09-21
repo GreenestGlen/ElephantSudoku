@@ -1,2 +1,2 @@
-# ElephantSudoku
-Metrostate Fall 2022 ICS 499 Project
+# wordoku
+ wordoku 3 by 3 or 2 by 2
