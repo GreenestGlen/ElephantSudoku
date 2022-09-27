@@ -38,13 +38,11 @@
 		if(isset($_POST["size"]) &&
 				isset($_POST["difficulty"]) &&
 				isset($_POST["word"]) &&
-				isset($_POST["puzzleNum"]) &&
 				isset($_POST["hiddenChar"])){
 			
 			$size = $_POST["size"];
 			
 			$hiddenCount = filter_input(INPUT_POST, "hiddenChar", FILTER_VALIDATE_INT);
-			$numPuzzles = filter_input(INPUT_POST, "puzzleNum", FILTER_VALIDATE_INT);
 			
 			$word = $_POST["word"];
 						
@@ -120,9 +118,10 @@
 			// Otherwise keep user on Index page and display the warning message
 			if($warningMessage == ""){
 				// Address should be in format: http://localhost/wordoku/wordokupuzzle.php?size=2x2&difficulty=beginner&word=ABCD
-				$url = "wordokuPuzzle.php?size=".$size."&hidecount=".$hiddenCount."&difficulty=".$difficulty."&word=".$word."&showsolution=".$showSolution."&numPuzzles=".$numPuzzles;
+				##To change
+				$url = "wordokuPuzzle.php?size=".$size."&hidecount=".$hiddenCount."&difficulty=".$difficulty."&word=".$word."&showsolution=".$showSolution;
 				//print_r("</br>");
-				print_r($url);
+				//print_r($url);
 				
 				header("Location:".$url);
 				die();
@@ -174,7 +173,7 @@
     <title>Wordoku Puzzle Generator</title>
 </head>
 <body>
-    <form action="index2.php" method="post">
+    <form action="index.php" method="post">
         <div class="container-fluid">
             <div class="jumbotron" id="jumbos">
             </div>
@@ -228,7 +227,13 @@
 								</div>
 								<div class="col-sm-4">
 									<label>Upload images to display alongside puzzles</label>
+<!-- Emmanuel's  edit -->
 									<input type="submit" name="upload" class="btn btn-primary btn-lg" value="Select Images">
+									<form action="uploads.php"method="POST" enctype="multipart/form-data">
+										<input type="file" name="file">
+										<button type="submit" name="submit">UPLOAD</button>
+									</form>
+<!-- Emmanuel's  edit ends here-->									
 								</div>
                             </div>
                             <div class="row">
