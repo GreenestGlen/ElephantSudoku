@@ -38,11 +38,13 @@
 		if(isset($_POST["size"]) &&
 				isset($_POST["difficulty"]) &&
 				isset($_POST["word"]) &&
+				isset($_POST["puzzleNum"]) &&
 				isset($_POST["hiddenChar"])){
 			
 			$size = $_POST["size"];
 			
 			$hiddenCount = filter_input(INPUT_POST, "hiddenChar", FILTER_VALIDATE_INT);
+			$numPuzzles = filter_input(INPUT_POST, "puzzleNum", FILTER_VALIDATE_INT);
 			
 			$word = $_POST["word"];
 						
@@ -118,10 +120,9 @@
 			// Otherwise keep user on Index page and display the warning message
 			if($warningMessage == ""){
 				// Address should be in format: http://localhost/wordoku/wordokupuzzle.php?size=2x2&difficulty=beginner&word=ABCD
-				##To change
-				$url = "wordokuPuzzle.php?size=".$size."&hidecount=".$hiddenCount."&difficulty=".$difficulty."&word=".$word."&showsolution=".$showSolution;
+				$url = "wordokuPuzzle.php?size=".$size."&hidecount=".$hiddenCount."&difficulty=".$difficulty."&word=".$word."&showsolution=".$showSolution."&numPuzzles=".$numPuzzles;
 				//print_r("</br>");
-				//print_r($url);
+				print_r($url);
 				
 				header("Location:".$url);
 				die();
@@ -173,7 +174,7 @@
     <title>Wordoku Puzzle Generator</title>
 </head>
 <body>
-    <form action="index.php" method="post">
+    <form action="index2.php" method="post">
         <div class="container-fluid">
             <div class="jumbotron" id="jumbos">
             </div>

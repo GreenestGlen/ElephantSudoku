@@ -15,7 +15,6 @@ $nav_selected = "LIST";
 $left_buttons = "NO";
 $left_selected = "";
 
-include_once "db_credentials.php";
 
 //require("word_processor.php");
 include("./nav.php");
@@ -25,17 +24,14 @@ $ini = parse_ini_file('config.ini');
  
 
 
-  $db->set_charset("utf8");
-  $sql = "SELECT * FROM words_list
-            WHERE id = -1";
   $sleep = true;
   $touched = isset($_POST['ident']);
   if (!$touched) {
 	  if(isset($_GET["size"])){
 			
- $size = $_GET["size"];}
+		$size = $_GET["size"];}
  //else{$size =""}
-if(isset($_GET["word"])){
+		if(isset($_GET["word"])){
 			$word = $_GET["word"];
 			
 		}
@@ -43,38 +39,26 @@ if(isset($_GET["word"])){
 			$word = "ABCD";
 		}
 //$size ="";
-if(isset($_GET["difficulty"])){
+		if(isset($_GET["difficulty"])){
 			
-$difficulty = $_GET["difficulty"];}
-if(isset($_GET["hidecount"])){
+		$difficulty = $_GET["difficulty"];}
+		if(isset($_GET["hidecount"])){
 			
-$hide =$hiddenCount = $_GET["hidecount"];}
-else{
+		$hide =$hiddenCount = $_GET["hidecount"];}
+		else{
 //$hide ="";
-    echo "You need to select an entry.";
+		echo "You need to select an entry.";
 	
-  ?>
-  
-    <button><a class="btn btn-sm" href="list.php">Go back</a></button>
-	<?php
-	die();
-}
-  ?>
-	
-  <?php
+		die();
+		}
 
 
   } else {
 	 
     $id = $_POST['ident'];
-    $sql = "SELECT * FROM words_list
-            WHERE id = '$id'";
   }
   if ($touched) {
 	  
-    if (!$result = $db->query($sql)) {
-      die('There was an error running query[' . $connection->error . ']');
-    } //end if
     //end if
 
     if ($result->num_rows > 0) {
@@ -124,7 +108,7 @@ else{
     } //end if
   }
 else {
-    echo "0 results";
+    //echo "0 results";
   } //end else
 
 		
@@ -171,10 +155,16 @@ else {
 		// echo($size.$difficulty.$word.$sizeNum.$hiddenCount.$showSolution);
 		
 		// Create new Wordoku which automatically generates a solution and puzzle
-		$wordoku = new Wordoku($sizeNum, $word, $hiddenCount);
-		$solution = $wordoku->getSolution();
-		$puzzle = $wordoku->getPuzzle();
-		$characters = $wordoku->getCharacters();
+		
+		$puzzleArray = array();
+		$numPuzzles = $_GET["numPuzzles"];
+		for($i = 0; $i < $numPuzzles; $i++){
+			$wordoku = new Wordoku($sizeNum, $word, $hiddenCount);
+			array_push($puzzleArray, $wordoku);
+		
+		$solution = $puzzleArray[0]->getSolution();
+		$puzzle = $puzzleArray[0]->getPuzzle();
+		$characters = $puzzleArray[0]->getCharacters();
 		$word = $wordoku->getWord();
 		
 		$_SESSION["solution"] = $solution;
@@ -184,13 +174,13 @@ else {
 		$_SESSION["difficulty"] = $difficulty;
 		
 				// Address should be in format: http://localhost/wordoku/wordokupuzzle.php?size=2x2&difficulty=beginner&word=ABCD
-				$url = "wordokuPuzzle.php?size=".$size."&hidecount=".$hiddenCount."&difficulty=".$difficulty."&word=".$word."&showsolution=".$showSolution;
+				//$url = "wordokuPuzzle.php?size=".$size."&hidecount=".$hiddenCount."&difficulty=".$difficulty."&word=".$word."&showsolution=".$showSolution."&numPuzzles=".$numPuzzles;
 				//print_r("</br>");
 				//print_r($url);
 				
 				//header("Location:".$url);
 				
-			
+		}	
 		// Returns int value based off passed in size input parameter
 		function getSizeNum($size){
 		switch($size){
@@ -248,11 +238,11 @@ else {
 											<?php
 												echo ucwords($difficulty);
 											?>
-										</h2>
+										</h2>										
 									</div>
 									<div class="col-sm-2">
 									</div>
-									<div class="col-sm-4" align="center">
+									<!--div class="col-sm-4" align="center">
 										<h4>Display Mode:</h4>
 									</div>
 									
@@ -262,14 +252,47 @@ else {
 											<option value="NumbersAndLetter">Numbers & Letter</option>
 											<option value="JustNumbers">Just Numbers</option>
 										</select>
-									</div>
+									</div -->
 								</div>
 							</div>
 						</div>
+								<div>
+									<div class="row">
+										<div class="form-group">
+											<center>
+												<input type="checkbox" class="showSolution" name="showSolutionTextBox" onchange="valueChanged()" 
+													<?php
+														// Sets the checkbox as checked or unchecked based on input parameters
+														if($showSolution == "true"){
+															echo('checked');
+																				}
+												?>> Show solutions?
+											</center>
+										</div>
+									</div>
+								</div>
 						<br>
-						<div class="col-sm-12"><input type="submit" name="submit" class="btn btn-primary btn-lg" value="Save"></div>
+						<?php
+							for($x = 0; $x < $numPuzzles; $x++){
+								
+								$solution = $puzzleArray[$x]->getSolution();
+								$puzzle = $puzzleArray[$x]->getPuzzle();
+		
+								$_SESSION["solution"] = $solution;
+								$_SESSION["puzzle"] = $puzzle;
+							
+						?>
 						<div class="panel-body">
-							<div class="row">
+							</br></br>
+							<!-- NORMAL -->
+							<div class="panel-heading">
+								<div class="row">
+									<div class="col-sm-12">
+										<div align="center"><h2>Puzzle <?php print_r($x+1) ?></h2></div>
+									</div>
+								</div>
+							</div>
+							<div class="row" style="padding-bottom:20px">
 								<div class="form-group" style='width:40%;margin:auto;border:2px solid black;padding-top:10px;padding-bottom:10px;text-align:center'>
 									<div class="text-center">
 										<h3>Character Key</h3>
@@ -278,6 +301,7 @@ else {
 								<div class="form-group" style='width:40%;margin:auto;border:2px solid black;padding-top:10px;padding-bottom:10px;text-align:center'>
 									<div class="text-center">
 										<h3>
+										
 										<?php
 											// Displays input word characters seperated out
 											foreach ($characters as $key => $letter){
@@ -288,8 +312,6 @@ else {
 									</div>
 								</div>
 							</div>
-							</br></br>
-							<!-- NORMAL -->
 							<div class="col-sm-12"  id="puzzleNormal">
 								<div class="puzzle">
 									<table id="grid">
@@ -316,107 +338,15 @@ else {
 									</table>
 								</div>
 							</div>
-							<!-- NUMBER AND LETTER -->
-							<div class="col-sm-12"  id="puzzleNumberAndLetter">
-								<div class="puzzle" style="position: relative;right: 24px;">
-									<table id="grid">
-										<?php 
-											// Display a puzzle with a Number row on top and letter column on the side
-											// Will appear in a grid like fasion to cells can be specified as A1, B2, etc.
-											echo('<tr>');
-											echo('<td style="border: none;"> </td>');
-											
-											for($i = 1; $i <= $wordsize; $i++){
-												echo('<td style="border: none;"> '.$i.' </td>');
-											
-											}
-											echo('</tr>');
-											echo('<tr>');
-											
-											$i = 0;
-											$letter = 'A';
-											foreach ($puzzle as $key => $value) 
-											{
-												echo('<tr>');
-												echo('<td class="headerCell" style="border: none;">');
-												echo($letter);
-												echo('</td>');
-												
-												$letter++;
-												
-												foreach ($value as $k => $val){
-													if($val != " "){
-														echo'<td id="cell'.$size.'-'.$i.'" bgcolor="#EEEEEE"> '.$val.' </td>
-														';
-													}
-													else{
-														echo'<td id="cell'.$size.'-'.$i.'"> '.$val.' </td>
-														';
-													}
-													$i++;
-												}
-												echo'</tr>';
-											}
-										?>
-									</table>
-								</div>
-							</div>
-							<!-- NUMBERS -->
-							<div class="col-sm-12"  id="puzzleNumbers">
-								<div class="puzzle">
-									<table id="grid">
-										<?php 
-											// Displays puzzle with empty values being assigned a number.
-											// Empty values could be specified then in message format like 1 = A, 2 = C, etc.
-											$i = 0;
-											$j = 1;
-											foreach ($puzzle as $key => $value) 
-											{
-												echo'<tr>';
-												foreach ($value as $k => $val){
-													if($val != " "){
-														
-														
-														echo'<td id="cell'.$size.'-'.$i.'" bgcolor="#EEEEEE"> '.$val.' </td>
-														';
-													}
-													else{
-														echo'<td id="cell'.$size.'-'.$i.'" style="font-size: 16px;align: left;vertical-align: top; text-align: left;"> '.$j.' </td>
-														';
-														
-														$j++;
-													}
-													$i++;
-												}
-												echo'</tr>';
-											}
-										?>
-									</table>
-								</div>
-							</div>
-						</div>					
-					</div>
-					<div>
-						<div class="row">
-							<div class="form-group">
-								<div class="col-sm-4">
-									<input type="checkbox" class="showSolution" name="showSolutionTextBox" onchange="valueChanged()" 
-									<?php
-										// Sets the checkbox as checked or unchecked based on input parameters
-										if($showSolution == "true"){
-											echo('checked');
-										}
-									?>> Show solution?
-								</div>
-							</div>
-						</div>
+
+							</div>					
 					</div>
 					<div class="solutionSection"> 
 						<div class="panel panel-primary">
 							<div class="panel-heading">
 								<div class="row">
 									<div class="col-sm-12">
-										<div align="center"><h2>Solution</h2></div>
+										<div align="center"><h2>Solution <?php print_r($x+1) ?></h2></div>
 									</div>
 								</div>
 							</div>
@@ -440,6 +370,7 @@ else {
 										</div>
 									</div>
 								</div>
+															
 								</br></br>
 								
 								<!-- Normal Solution -->
@@ -471,57 +402,11 @@ else {
 										</div>
 									</div>
 								</div>
-								<!-- Normal Numbers and Letters -->
-								<div class="col-sm-12" id="solutionNumberAndLetter">
-									<div class="col-sm-12">
-										<div class="puzzle" style="position: relative;right: 24px;">
-											<table id="grid">
-												<?php 
-													// Display a solution with a Number row on top and letter column on the side
-													// Will appear in a grid like fasion to cells can be specified as A1, B2, etc.
-													echo('<tr>');
-													echo('<td style="border: none;"> </td>');
-													echo $size;
-													for($i = 1; $i <= $wordsize; $i++){
-														
-														echo('<td style="border: none;"> '.$i.' </td>');
-													}
-													echo('</tr>');
-													echo('<tr>');
-													
-													$i = 0;
-													$letter = 'A';
-													foreach ($solution as $key => $value) 
-													{
-														echo('<tr>');
-														echo('<td class="headerCell" style="border: none;">');
-														echo($letter);
-														echo('</td>');
-														
-														$letter++;
-														
-														foreach ($value as $k => $val){
-															if($puzzle[$key][$k] != " "){
-																echo'<td id="cell'.$size.'-'.$i.'" bgcolor="#EEEEEE"> '.$val.' </td>
-																';
-															}
-															else{
-																echo'<td id="cell'.$size.'-'.$i.'" bgcolor="#EEEEEE" style="color: red;"> '.$val.' </td>
-																';
-															}
-															$i++;
-														}
-														echo'</tr>';
-													}
-												?>
-											</table>
-										</div>
-									</div>
 								</div>
-							</div>
 						</div>
 					</div>	
 				</div>
+				<?php } ?>
 			</div>
 		</div>
 	</form>
