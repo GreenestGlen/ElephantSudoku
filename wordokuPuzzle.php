@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN''http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
 <head>
-	<?php
+<?php
+	$pageNum = 0;
 		/*  Created by Stephen Schneider
 		 *	Creates a web page that shows a Wordoku puzzle and solution.
 		 *	Page is accessed by a get request and does not require to be created from the index page.
@@ -14,7 +15,6 @@
 $nav_selected = "LIST";
 $left_buttons = "NO";
 $left_selected = "";
-
 
 //require("word_processor.php");
 include("./nav.php");
@@ -216,18 +216,19 @@ else {
 	
     <!-- Latest compiled JavaScript -->
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	
+	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale = 1">
     <title>Wordoku Puzzle Generator</title>
 </head>
 <body>
-	<form action="wordokuSave.php" method="post">
 		<div class="container-fluid">
 			<div class="jumbotron" id="jumbos">
 			</div>
 			<br>
-			<div class="panel">
+			<div class="panel" name ="displayArea" id ="displayArea">
 				<div class="panel-group">
 					<div class="panel panel-primary">
 						<div class="panel-heading">
@@ -270,10 +271,15 @@ else {
 											</center>
 										</div>
 									</div>
+									<<div class="row">
+											<div align = "right" class ="col-sm-6"><button type="button" name="previous" class="btn btn-primary btn-lg" value="Previous" onclick="previous()"> Previous </button></div>
+											
+											<div class ="col-sm-6"><button type="button" name="next" class="btn btn-primary btn-lg" value="Next" onclick="next()">  Next  </button></div>
+									</div>
 								</div>
 						<br>
 						<?php
-							for($x = 0; $x < $numPuzzles; $x++){
+							for($x = $pageNum * 10; $x < $pageNum*10+10 && $x < $numPuzzles; $x++){
 								
 								$solution = $puzzleArray[$x]->getSolution();
 								$puzzle = $puzzleArray[$x]->getPuzzle();
@@ -409,7 +415,6 @@ else {
 				<?php } ?>
 			</div>
 		</div>
-	</form>
 </body>
 <script>
 	// Shows the solution on initialization based on whether the box is checked
@@ -460,6 +465,25 @@ else {
 			$('#solutionNormal').show();
 			$('#solutionNumberAndLetter').hide();
 		}
+	}
+	
+	function previous(){
+		<?php
+			if($pageNum > 0){	
+			$pageNum = $pageNum-1;
+		?>
+		$("#displayArea").load(window.location.href + " #displayArea" );
+		
+		<?php } ?>
+	}												
+												
+	function next(){
+		<?php
+			if($pageNum*10 +10 < $numPuzzles){
+			$pageNum = $pageNum + 1;
+		?>
+		$("#displayArea").load(window.location.href + " #displayArea" );
+		<?php } ?>
 	}
 </script>
 </html>

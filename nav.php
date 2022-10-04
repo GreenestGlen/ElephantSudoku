@@ -33,33 +33,22 @@ require_once './initialize.php';
   <div id="wrap">
     <div id="nav">
       <ul>
-        <a href="list.php">
+        <a href="index2.php">
           <li class="horozontal-li-logo">
             <img src="./images/wordoku.png">
             <br />Wordoku</li>
         </a>
 
-        <a href="list.php">
+        <a href="https://telugupuzzles.com/">
           <li <?php if ($nav_selected == "HOME") {
                 echo 'class="current-page"';
               } ?>>
             <img src="./images/home.png">
             <br />Home</li>
         </a>
+     
 
-        
-
-        <a href="batch.php">
-          <li <?php if ($nav_selected == "Batch") {
-                echo 'class="current-page"';
-              } ?>>
-            <img src="./images/batch.png">
-            <br />Batch</li>
-        </a>
-
-        
-
-        <a href="list.php">
+        <a href="https://telugupuzzles.com/about.php">
           <li <?php if ($nav_selected == "PREF") {
                 echo 'class="current-page"';
               } ?>>
