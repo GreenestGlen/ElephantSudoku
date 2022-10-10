@@ -1,14 +1,13 @@
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN''http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
 <head>
 <?php
-	$pageNum = 0;
 		/*  Created by Stephen Schneider
 		 *	Creates a web page that shows a Wordoku puzzle and solution.
 		 *	Page is accessed by a get request and does not require to be created from the index page.
 		 *	Index page is designed to send the user to this page by URL after inputing information with no errors.
 		 *	A blank puzzle will be generated if the wrong information is provided and fails validation and/or default values.
 		 */
-		session_start();
+		//session_start();
 		 
 
 
@@ -22,7 +21,6 @@ require("Wordoku.php");
 require("word_processor.php");
 $ini = parse_ini_file('config.ini');
  
-
 
   $sleep = true;
   $touched = isset($_POST['ident']);
@@ -155,23 +153,26 @@ else {
 		// echo($size.$difficulty.$word.$sizeNum.$hiddenCount.$showSolution);
 		
 		// Create new Wordoku which automatically generates a solution and puzzle
-		
-		$puzzleArray = array();
 		$numPuzzles = $_GET["numPuzzles"];
-		for($i = 0; $i < $numPuzzles; $i++){
-			$wordoku = new Wordoku($sizeNum, $word, $hiddenCount);
-			array_push($puzzleArray, $wordoku);
-		
-		$solution = $puzzleArray[0]->getSolution();
-		$puzzle = $puzzleArray[0]->getPuzzle();
-		$characters = $puzzleArray[0]->getCharacters();
-		$word = $wordoku->getWord();
-		
-		$_SESSION["solution"] = $solution;
-		$_SESSION["puzzle"] = $puzzle;
-		$_SESSION["word"] = $word;
-		$_SESSION["size"] = $size;
-		$_SESSION["difficulty"] = $difficulty;
+		//if(sizeof($_SESSION['puzzleArray']) > 0){
+			//$wordoku = new Wordoku($sizeNum, $word, $hiddenCount);
+		//}
+		//else{
+			$_SESSION['puzzleArray'] = array();
+			for($i = 0; $i < $numPuzzles; $i++){
+				$wordoku = new Wordoku($sizeNum, $word, $hiddenCount);
+				array_push($_SESSION['puzzleArray'], $wordoku);
+				$solution = $_SESSION['puzzleArray'][0]->getSolution();
+				$puzzle = $_SESSION['puzzleArray'][0]->getPuzzle();
+				$characters = $_SESSION['puzzleArray'][0]->getCharacters();
+				$word = $wordoku->getWord();
+				$_SESSION["solution"] = $solution;
+				$_SESSION["puzzle"] = $puzzle;
+				$_SESSION["word"] = $word;
+				$_SESSION["size"] = $size;
+				$_SESSION["difficulty"] = $difficulty;
+			}
+		//}
 		
 				// Address should be in format: http://localhost/wordoku/wordokupuzzle.php?size=2x2&difficulty=beginner&word=ABCD
 				//$url = "wordokuPuzzle.php?size=".$size."&hidecount=".$hiddenCount."&difficulty=".$difficulty."&word=".$word."&showsolution=".$showSolution."&numPuzzles=".$numPuzzles;
@@ -180,7 +181,7 @@ else {
 				
 				//header("Location:".$url);
 				
-		}	
+		
 		// Returns int value based off passed in size input parameter
 		function getSizeNum($size){
 		switch($size){
@@ -223,7 +224,7 @@ else {
     <meta name="viewport" content="width=device-width, initial-scale = 1">
     <title>Wordoku Puzzle Generator</title>
 </head>
-<body>
+<body onload="getImage()">
 		<div class="container-fluid">
 			<div class="jumbotron" id="jumbos">
 			</div>
@@ -235,9 +236,10 @@ else {
 							<div class="row">
 								<div class="col-sm-12">
 									<div align="center">
-										<h2>Wordoku
+										<h2>Wordoku Plus
 											<?php
 												echo ucwords($difficulty);
+												echo $_SESSION['pageNum'];
 											?>
 										</h2>										
 									</div>
@@ -274,15 +276,15 @@ else {
 									<<div class="row">
 											<div align = "right" class ="col-sm-6"><button type="button" name="previous" class="btn btn-primary btn-lg" value="Previous" onclick="previous()"> Previous </button></div>
 											
-											<div class ="col-sm-6"><button type="button" name="next" class="btn btn-primary btn-lg" value="Next" onclick="next()">  Next  </button></div>
+											<div class ="col-sm-6"><button type="button" name="next" class="btn btn-primary btn-lg" value=" Next " onclick="next()">  Next  </button></div>
 									</div>
 								</div>
 						<br>
 						<?php
-							for($x = $pageNum * 10; $x < $pageNum*10+10 && $x < $numPuzzles; $x++){
+							for($x = $_SESSION['pageNum'] * 10; $x < $_SESSION['pageNum']*10+10 && $x < $numPuzzles; $x++){
 								
-								$solution = $puzzleArray[$x]->getSolution();
-								$puzzle = $puzzleArray[$x]->getPuzzle();
+								$solution = $_SESSION['puzzleArray'][$x]->getSolution();
+								$puzzle = $_SESSION['puzzleArray'][$x]->getPuzzle();
 		
 								$_SESSION["solution"] = $solution;
 								$_SESSION["puzzle"] = $puzzle;
@@ -318,7 +320,15 @@ else {
 									</div>
 								</div>
 							</div>
-							<div class="col-sm-12"  id="puzzleNormal">
+							<div class="col-sm-4" id="imageBlock">
+								<?php
+									$imagesDir = 'uploads/';
+									$images = glob($imagesDir . '*.{jpg,jpeg,png,gif}', GLOB_BRACE);
+									$randomImage = $images[array_rand($images)];
+								?>
+								<img id="userImg" src="<?php echo $randomImage; ?>">
+							</div>
+							<div class="col-sm-8"  id="puzzleNormal">
 								<div class="puzzle">
 									<table id="grid">
 										<?php 
@@ -469,21 +479,35 @@ else {
 	
 	function previous(){
 		<?php
-			if($pageNum > 0){	
-			$pageNum = $pageNum-1;
+			if($_SESSION['pageNum'] > 0){	
+				$_SESSION['pageNum']--;
 		?>
-		$("#displayArea").load(window.location.href + " #displayArea" );
-		
+		$("#displayArea").load(document.URL + " #displayArea" );
 		<?php } ?>
 	}												
 												
 	function next(){
 		<?php
-			if($pageNum*10 +10 < $numPuzzles){
-			$pageNum = $pageNum + 1;
+			if($_SESSION['pageNum']*10 +10 <= $numPuzzles){
+				$_SESSION['pageNum']++;;
+			
 		?>
-		$("#displayArea").load(window.location.href + " #displayArea" );
+		$("#displayArea").load(document.URL + " #displayArea" );
 		<?php } ?>
 	}
+	
+	function getImage(){
+		var files = glob('uploads'.'/*.*');
+		var fileNum = Math.round(Math.random() * files.length);
+		document.write('<img src="/uploads/'+files[fileNum]+' ">');
+		alert("PICTURE!");
+	}
 </script>
+
+<style>
+	#userImg{
+		max-height: 100%;
+		max-width: 100%;
+	}
+</style>
 </html>

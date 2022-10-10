@@ -6,7 +6,8 @@
 		 *  After validation of input, the page is redirected to the Wordoku Puzzle page as a GET request with passed in parameters.
 		 */
 		 
-	
+	session_start();
+	$_SESSION['pageNum'] = 0;
 	ob_start();
 	require("word_processor.php");
 	$ini = parse_ini_file('config.ini');
@@ -229,10 +230,10 @@
 								<div class="col-sm-4">
 									<label>Upload images to display alongside puzzles</label>
 	<!-- Emmanuel's  edit -->
-									<!--input type="submit" name="upload" class="btn btn-primary btn-lg" value="Select Images"-->
-									<form action="uploads.php"method="POST" enctype="multipart/form-data">
-										<input type="file" name="file"class="btn btn-primary btn-lg" value="Select Images">
-									</form>
+									<div>
+										<input type="file" name="files" id="files" multiple>
+										<input type="button" id="btn_uploadfile" value="Upload" onclick="uploadImgs();">
+									</div>
 <!-- Emmanuel's  edit ends here-->	
                             </div>
                             <div class="row">
@@ -357,5 +358,35 @@
 			}
 		}
 	}
+	
+	
+	function uploadImgs(){
+		var totalfiles = document.getElementById('files').files.length;
+
+		if(totalfiles > 0 ){
+
+			var formData = new FormData();
+			for (var index = 0; index < totalfiles; index++) {
+				formData.append("files[]", document.getElementById('files').files[index]);
+			}
+
+			var xhttp = new XMLHttpRequest();
+			xhttp.open("POST", "ajaxfile.php", true);
+			xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+
+				var response = this.responseText;
+
+				alert(response + " File uploaded.");
+				}
+			};
+			xhttp.send(formData);
+		}
+		else{
+			alert("Please select a file");
+		}
+	}
+	
+	
 </script>
 </html>
