@@ -234,7 +234,7 @@ else {
     <meta name="viewport" content="width=device-width, initial-scale = 1">
     <title>Wordoku Puzzle Generator</title>
 </head>
-<body onload="getImage()">
+<body>
 		<div class="container-fluid">
 			<div class="jumbotron" id="jumbos">
 			</div>
@@ -290,6 +290,7 @@ else {
 		</div>
 </body>
 <script>
+	var num = 0;
 	// Shows the solution on initialization based on whether the box is checked
 	if($('.showSolution').is(":checked")){
 		$(".solutionSection").show();
@@ -338,12 +339,6 @@ else {
 			$('#solutionNormal').show();
 			$('#solutionNumberAndLetter').hide();
 		}
-	}
-	
-	function getImage(){
-		var files = glob('uploads'.'/*.*');
-		var fileNum = Math.round(Math.random() * files.length);
-		document.write('<img src="/uploads/'+files[fileNum]+' ">');
 	}
 </script>
 

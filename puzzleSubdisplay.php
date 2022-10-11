@@ -1,3 +1,4 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN''http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
 
 <head>
 	
@@ -6,9 +7,9 @@
 <body>
 <div id='page'>
 <div class="row">
-	<div align = "right" class ="col-sm-6"><button type="button" name="previous" class="btn btn-primary btn-lg" value="Previous" onclick="previous()"> Previous </button></div>
+	<div align = "right" class ="col-sm-6"><button type="button" name="previous" class="btn btn-primary btn-lg" value="Previous" id="Prev"> Previous </button></div>
 											
-	<div class ="col-sm-6"><button type="button" name="next" class="btn btn-primary btn-lg" value=" Next " onclick="next()">  Next  </button></div>
+	<div class ="col-sm-6"><button type="button" name="next" class="btn btn-primary btn-lg" value=" Next " id ="Next">  Next  </button></div>
 </div>
 
 <?php
@@ -159,29 +160,15 @@
 				<?php } ?>
 </div>
 </body>
-<script>
+<script >
+	document.getElementById("Prev").addEventListener("click", previous);
+	document.getElementById("Next").addEventListener("click", next);
 	function previous(){
-		alert('prev');
-		<?php
-			if($pageNum > 0){	
-				$pageNum--;
-			}
-			else{
-				$pageNum = 0;
-			}
-		?>
-		
 		location.reload();
 	}												
 												
 	function next(){
-		alert('next');
-		<?php
-			if($_pageNum*10 +10 <= $numPuzzles){
-				$pageNum++;
-			
-		?>
 		location.reload();
-		<?php } ?>
+		
 	}
 </script>
