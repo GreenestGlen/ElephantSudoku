@@ -1,3 +1,8 @@
+<?php
+
+ini_set('xdebug.max_nesting_level', 500);
+
+?>
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN''http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
 <html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
 
@@ -222,6 +227,7 @@
 	$_SESSION["words"] = $words;
 	$_SESSION["size"] = $size;
 	$_SESSION["difficulty"] = $difficulty;
+	$_SESSION["images"] = $images;
 
 	// Address should be in format: http://localhost/wordoku/wordokupuzzle.php?size=2x2&difficulty=beginner&word=ABCD
 	$url = "wordokuPuzzle.php?size=" . $size . "&hidecount=" . $hiddenCount . "&difficulty=" . $difficulty . "&word=" . $word . "&showsolution=" . $showSolution;
@@ -274,7 +280,7 @@
 </head>
 
 <body>
-	<form action="wordokuSave.php" method="post">
+	<form action="wordokuSave3a.php" method="post">
 		<div class="container-fluid">
 			<div class="jumbotron" id="jumbos">
 			</div>
@@ -320,7 +326,7 @@
 								<div class="row">
 									<div style="width:100%; display:flex;">
 										<div style="flex:1; display:flex; align-items:bottom">
-											<img style="max-width: 90%;" src="<?php echo $images[$iz]; ?>">
+										<?php if(isset($images[$iz])) { ?>	<img style="max-width: 90%;" src="<?php echo $images[$iz]; ?>"> <?php } ?>
 										</div>
 										<div style="flex:1">
 											<div>

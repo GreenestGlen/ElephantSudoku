@@ -23,8 +23,10 @@
 		for($i = 0; $i < $files_len; $i++) {
 			$mime = strtolower(pathinfo($files["name"][$i], PATHINFO_EXTENSION));
 			if(in_array($mime, ['png', 'jpg', 'jpeg', 'gif', 'svg'])){
-				move_uploaded_file($files['tmp_name'][$i], "uploads/".$image_folder."/".$i.".png");
-				$upload_cnt++;
+				if($files["size"][$i] > 50){ // Only allow valid file
+					move_uploaded_file($files['tmp_name'][$i], "uploads/".$image_folder."/".$i.".png");
+					$upload_cnt++;
+				}
 			}
 		}
 		if($upload_cnt > 0){
